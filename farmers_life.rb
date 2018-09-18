@@ -9,7 +9,7 @@
 # Stretch
 # handle the cases where users might enter bad input - make sure your program doesn't error out! - DONE
 # add a new field type - make sure it works with all the commands - DONE, accepts melons, watermelons, weeds and else
-# allow farms to also have pastures. Pastures store animals, and on harvest, the animals breed, adding more animals
+# allow farms to also have pastures. Pastures store animals, and on harvest, the animals breed, adding more animals - DONE
 
 class Farm
 
@@ -58,12 +58,12 @@ class Farm
   def add_new_field
     puts "What kind of field is it: melon, watermelon, weeds or else?:"
     puts
-    culture = gets.chomp #input other than *melon*, *watermelon* or *weeds* will end up in *else* (like melons, meluns or melans)
+    culture = gets.chomp # input other than *melon*, *watermelon* or *weeds* will end up in *else* (like melons, meluns or melans)
     puts
     puts "How large is the field in hectares?:"
     puts
     area = gets.chomp.to_i
-    puts area
+    # puts area
     while area == 0 do # Stretch 1
       puts "Please, enter a number!"
       area = gets.chomp.to_i
@@ -81,7 +81,7 @@ class Farm
   def add_new_pasture
     puts "What kind of breed is it: cow, goat, pig or else?:"
     puts
-    breed = gets.chomp #input other than *cow*, *goat* or *pig* will end up in *else* (like goat, gout or git)
+    breed = gets.chomp # input other than *cow*, *goat* or *pig* will end up in *else* (like goat, gout or git)
     puts
     puts "How large is the pasture in hectares?:"
     puts
@@ -100,28 +100,45 @@ class Farm
     puts
   end
 
-
   def harvest_time
     puts
-    total_harvest = 0
+    total_harvest_fields = 0
     Field.all.each do |fields|
       puts "Harvesting #{fields.productivity * fields.area} food from #{fields.area} ha #{fields.culture} field."
-      total_harvest += fields.productivity * fields.area
+      total_harvest_fields += fields.productivity * fields.area
     end
     puts
-    puts "The farm has #{total_harvest} harvested food so far."
+    puts "The farm has #{total_harvest_fields} harvested food so far from fields."
+    puts
+    total_harvest_pastures = 0
+    Pasture.all.each do |pastures|
+      puts "Harvesting #{pastures.productivity * pastures.quantity} food from #{pastures.quantity} ha of #{pastures.breed} pasture."
+      total_harvest_pastures += pastures.productivity * pastures.quantity
+    end
+    puts
+    puts "The farm has #{total_harvest_pastures} harvested food so far from pastures."
+    puts
+    puts "The farm has #{total_harvest_pastures + total_harvest_fields} harvested food so far from fields and pastures."
     puts
   end
 
   def status_farm
     puts
-    total_harvest = 0
+    total_harvest_fields = 0
     Field.all.each do |fields|
       puts "#{fields.culture.capitalize} field is #{fields.area} ha."
-      total_harvest += fields.productivity * fields.area
+      total_harvest_fields += fields.productivity * fields.area
     end
     puts
-    puts "The farm has #{total_harvest} harvested food so far."
+    puts "The farm has #{total_harvest_fields} harvested food so far."
+    puts
+    total_harvest_pastures = 0
+    Pasture.all.each do |pastures|
+      puts "#{pastures.breed.capitalize} pasture is #{pastures.quantity} ha."
+      total_harvest_pastures += pastures.productivity * pastures.quantity
+    end
+    puts
+    puts "The farm has #{total_harvest_pastures} harvested food so far."
     puts
   end
 
@@ -130,14 +147,14 @@ class Farm
       puts
       puts "No relax for the lazy! Go plow a field you, slob!"
       puts
-      exit
-    end
-    animal_sounds = ["chirping", "tweeting", "squeaking", "barking", "purring"]
-    animals = ["mouse", "bobcat", "robin", "hedgehog", "piglet"]
-    adverbs = ["menacingly", "frighteningly", "happily", "desperately", "slyly"]
-    adjectives = ["hidden", "young", "hungry", "wounded", "dying"]
-    Field.all.each do |fields|
-      puts "A #{adjectives.sample} #{animals.sample} is #{adverbs.sample} #{animal_sounds.sample} in the #{fields.area} ha sea of #{fields.culture}."
+    else
+      animal_sounds = ["chirping", "tweeting", "squeaking", "barking", "purring", "puffing"]
+      animals = ["mouse", "bobcat", "robin", "hedgehog", "piglet"]
+      adverbs = ["menacingly", "frighteningly", "happily", "desperately", "slyly"]
+      adjectives = ["hidden", "young", "hungry", "wounded", "dying"]
+      Field.all.each do |fields|
+        puts "A #{adjectives.sample} #{animals.sample} is #{adverbs.sample} #{animal_sounds.sample} in the #{fields.area} ha sea of #{fields.culture}."
+      end
     end
   end
 
@@ -158,10 +175,10 @@ class Pasture
   def initialize(breed, quantity)
     @breed = breed
     @quantity = quantity
-    case culture
-    when "goats" then @productivity = @@productivity_goats
-    when "cows" then @productivity = @@productivity_cows
-    when "pigs" then @productivity = @@productivity_pigs
+    case breed
+    when "goat" then @productivity = @@productivity_goats
+    when "cow" then @productivity = @@productivity_cows
+    when "pig" then @productivity = @@productivity_pigs
     else @productivity = @@productivity_other_animals
     end
   end
